@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('is_admin')->default(false);
-            $table->boolean('is_banned')->default(false);
+            $table->date('banned_at')->nullable();
             $table->integer('reputation')->default(0);
         });
     }
@@ -24,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['is_admin', 'is_banned', 'reputation']);
+            $table->dropColumn(['is_admin', 'banned_at', 'reputation']);
         });
     }
 };
