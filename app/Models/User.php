@@ -50,4 +50,9 @@ class User extends Authenticatable
             'banned_at' => 'datetime'
         ];
     }
+
+    public function colocations()
+    {
+        return $this->belongsToMany(Colocation::class, 'colocation_members')->withPivot(['role', 'left_at'])->withTimestamps();
+    }
 }
