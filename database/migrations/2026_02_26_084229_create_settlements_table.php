@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('settlements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('colocation_id')->constrained()->onDelete('cascade');
+            $table->foreignId('colocation_id')->constrained()->cascadeOnDelete();
             $table->foreignId('payer_id')->constrained('users');
             $table->foreignId('receiver_id')->constrained('users');
-            $table->decimal('amount', 10, 2);
-            $table->timestamp('marked_as_paid')->nullable();
+            $table->decimal('amount');
+            $table->timestamp('paid_at')->nullable();
             $table->timestamps();
 
-            $table->index(['colocation_id', 'marked_as_paid']);
+            $table->index(['colocation_id', 'paid_at']);
         });
     }
 
