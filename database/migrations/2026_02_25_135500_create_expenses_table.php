@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('title', 255);
             $table->decimal('amount');
-            $table->date('date');
+            $table->date('start_at');
             $table->foreignId('payer_id')->constrained('users');
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->foreignId('colocation_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
 
-            $table->index(['colocation_id', 'date']);
+            $table->index(['colocation_id', 'start_at']);
         });
     }
 
