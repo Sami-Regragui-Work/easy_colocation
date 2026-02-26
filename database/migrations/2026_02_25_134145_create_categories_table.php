@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 70);
             $table->foreignId('colocation_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
