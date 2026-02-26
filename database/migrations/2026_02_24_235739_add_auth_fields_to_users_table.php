@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('is_admin')->default(false);
-            $table->date('banned_at')->nullable();
             $table->integer('reputation')->default(0);
+            $table->timestamp('banned_at')->nullable();
         });
     }
 
