@@ -47,4 +47,23 @@ class Colocation extends Model
     {
         return $this->hasMany(Settlement::class);
     }
+
+    // not relations (helpers)
+
+    public function activeMembers()
+    {
+        return $this->members()->wherePivot('left_at', null);
+    }
+
+    public function pendingSettlements()
+    {
+        return $this->settlements()->whereNull('paid_at');
+    }
+
+    protected static function booted()
+    {
+        static::deleting(function (Colocation $coloc) {
+            $coloc->categories()->delete();
+        });
+    }
 }
