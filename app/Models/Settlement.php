@@ -35,4 +35,17 @@ class Settlement extends Model
     {
         return $this->belongsTo(User::class, 'receiver_id');
     }
+
+    // not relations (helpers)
+
+    public function isPending(): bool
+    {
+        return is_null($this->paid_at);
+    }
+
+    public function markAsPaid(): void
+    {
+        $this->update(['paid_at' => now()]);
+        $this->payer->increment('reputation');
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 class Category extends Model
 {
@@ -20,5 +21,12 @@ class Category extends Model
     public function expenses()
     {
         return $this->hasMany(Expense::class);
+    }
+
+    // not relations (helpers)
+
+    public static function getNameSuggestions(string $query = ''): Collection
+    {
+        return self::onlyTrashed()->where('name', 'like', "%{$query}%")->select('name')->distinct()->orderByRaw('COUNT(*) desc')->limit(10)->pluck('name');
     }
 }
