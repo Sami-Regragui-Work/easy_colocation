@@ -75,4 +75,38 @@ class User extends Authenticatable
     {
         return $this->hasMany(Settlement::class, 'receiver_id');
     }
+
+    // not relations (helpers)
+
+    public function activeColocations()
+    {
+        return $this->colocations()->wherePivot('left_at', null);
+    }
+
+    public function whichColocation(): ?Colocation
+    {
+        return $this->activeColocations()->first();
+    }
+
+    public function whichRole(Colocation $colocation): ?string
+    {
+        return $this->colocations()
+            ->where('colocation_id', $colocation->id)
+            ->first()?->pivot?->role;
+    }
+
+    public function isBanned(): bool
+    {
+        return !is_null($this->banned_at);
+    }
+
+    public function ban(): void
+    {
+        $this->update(['banned_at' => now()]);
+    }
+
+    public function unban(): void
+    {
+        $this->update(['banned_at' => null]);
+    }
 }
