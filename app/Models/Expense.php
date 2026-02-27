@@ -18,11 +18,6 @@ class Expense extends Model
         'start_at' => 'date',
     ];
 
-    public function colocation()
-    {
-        return $this->belongsTo(Colocation::class);
-    }
-
     public function payer()
     {
         return $this->belongsTo(User::class, 'payer_id');
@@ -31,5 +26,10 @@ class Expense extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function colocation()
+    {
+        return $this->through('category')->belongsTo(Colocation::class);
     }
 }
