@@ -23,4 +23,11 @@ class Invitation extends Model
     {
         return $this->belongsTo(Colocation::class);
     }
+
+    // not relations (helpers)
+
+    public function isPending(): bool
+    {
+        return is_null($this->accepted_at) && is_null($this->refused_at);
+    }
 }
