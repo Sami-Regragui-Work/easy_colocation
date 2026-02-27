@@ -55,4 +55,24 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Colocation::class, 'colocation_members')->withPivot(['role', 'left_at'])->withTimestamps();
     }
+
+    public function ownedColocations()
+    {
+        return $this->hasMany(Colocation::class, 'owner_id');
+    }
+
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class, 'payer_id');
+    }
+
+    public function sentSettlements()
+    {
+        return $this->hasMany(Settlement::class, 'payer_id');
+    }
+
+    public function receivedSettlements()
+    {
+        return $this->hasMany(Settlement::class, 'receiver_id');
+    }
 }
