@@ -18,10 +18,9 @@ return new class extends Migration
             $table->date('start_at');
             $table->foreignId('payer_id')->constrained('users');
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('colocation_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
 
-            $table->index(['colocation_id', 'start_at']);
+            $table->index('start_at');
         });
     }
 
