@@ -20,4 +20,19 @@ class Settlement extends Model
             'paid_at' => 'datetime'
         ];
     }
+
+    public function colocation()
+    {
+        return $this->belongsTo(Colocation::class);
+    }
+
+    public function payer()
+    {
+        return $this->belongsTo(User::class, 'payer_id');
+    }
+
+    public function receiver()
+    {
+        return $this->belongsTo(User::class, 'receiver_id');
+    }
 }
