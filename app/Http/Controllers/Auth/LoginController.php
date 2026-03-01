@@ -39,6 +39,6 @@ class LoginController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route('colocations.index'));
     }
 }

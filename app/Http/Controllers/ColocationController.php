@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
+use function Symfony\Component\Clock\now;
+
 class ColocationController extends Controller
 {
     /**
@@ -27,7 +29,6 @@ class ColocationController extends Controller
 
         $colocations = $user->colocations()->with([
             'members' => fn($q) => $q->withPivot('role', 'left_at'),
-            'members.user',
             'owner'
         ])->get();
 
@@ -53,7 +54,7 @@ class ColocationController extends Controller
         $user = Auth::user();
 
         if ($user->activeColocations()->exists()) {
-            return redirect()->route('colocations.index')->withErrors(['colocation' => 'You already belong to an active colocation.']);
+            return redirect()->route('colocations.index')->with('error', 'You already belong to an active colocation.');
         }
 
         $validated = $request->validated();
@@ -78,7 +79,7 @@ class ColocationController extends Controller
         Gate::authorize('can_view_colocation', $colocation);
 
         $colocation->load([
-            'members' => fn($q) => $q->withPivot('role', 'left_at')->wherePivot('left_at', null)->with('user'),
+            'members' => fn($q) => $q->withPivot('role', 'left_at')->wherePivot('left_at', null),
             'owner',
             'categories',
             'expenses' => fn($q) => $q->with(['payer', 'category'])
@@ -146,6 +147,7 @@ class ColocationController extends Controller
         }
 
         $colocation->status = 'cancelled';
+        $colocation->members()->updateExistingPivot($colocation->owner_id, ['left_at' => now()]);
         $colocation->save();
 
         return redirect()->route('colocations.index')->with('status', 'Colocation cancelled.');
@@ -177,7 +179,7 @@ class ColocationController extends Controller
         $colocation->members()->updateExistingPivot($member->id, ['left_at' => now()]);
 
         // $member->reputation -= 1;
-        
+
         $member->save();
 
         return redirect()->route('colocations.show', $colocation)->with('status', "Member {$member->name} removed.");

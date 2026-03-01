@@ -28,6 +28,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
         $request->session()->regenerateToken();
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route('colocations.index'));
     }
 }
