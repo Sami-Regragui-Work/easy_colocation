@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [LogoutController::class, 'handle'])->name('logout');
 
-    // Successful Login
+    // Fallback route
     Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
 });
 
