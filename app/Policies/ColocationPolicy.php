@@ -21,9 +21,10 @@ class ColocationPolicy
      */
     public function can_view_colocation(User $user, Colocation $colocation): Response
     {
-        $isMemberOrOwner = $colocation->members()->where('user_id', $user->id)->whereNull('left_at')->exists();
+        $isMember = $colocation->members()->where('user_id', $user->id)->whereNull('left_at')->exists();
+        $isOrWasOwner = $colocation->owner_id === $user->id;
 
-        return $isMemberOrOwner
+        return ($isMember || $isOrWasOwner)
             ? Response::allow()
             : Response::denyWithStatus(403, 'You are not in this colocation.');
     }
