@@ -6,6 +6,8 @@
     <title>{{ $title }}</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 </head>
 <body class="antialiased bg-gray-50">
     <div class="min-h-screen">
