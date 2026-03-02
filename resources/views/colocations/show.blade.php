@@ -96,6 +96,50 @@
                 </ul>
             </div>
 
+            {{-- Pending Settlements --}}
+            @if ($colocation->pendingSettlements->isNotEmpty())
+                <div class="mt-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                        <span>Pending Settlements</span>
+                        <span class="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
+                            {{ $colocation->pendingSettlements->count() }}
+                        </span>
+                    </h2>
+
+                    <div class="bg-white shadow rounded-lg overflow-hidden">
+                        @foreach ($colocation->pendingSettlements as $settlement)
+                            <div class="px-6 py-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="font-semibold text-gray-900">
+                                            {{ $settlement->payer->name }}
+                                        </div>
+                                        <div class="text-gray-500">owes</div>
+                                        <div class="font-semibold text-gray-900">
+                                            {{ $settlement->receiver->name }}
+                                        </div>
+                                        <div class="text-2xl font-bold text-green-600 ml-2">
+                                            {{ number_format($settlement->amount, 2) }} DH
+                                        </div>
+                                    </div>
+
+                                    @if (auth()->id() === $settlement->payer_id || auth()->id() === $colocation->owner_id)
+                                        <form action="{{ route('settlements.markPaid', $settlement) }}" method="POST"
+                                            class="inline">
+                                            @csrf
+                                            <button type="submit"
+                                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+                                                Mark Paid
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <!-- Invite form -->
             <div class="mt-8 bg-white shadow rounded-lg p-6">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">Invite a Member</h2>

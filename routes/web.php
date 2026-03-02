@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColocationController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\SettlementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,6 +35,9 @@ Route::middleware('auth')->group(function () {
 
     // Fallback route
     Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
+
+    // Settlement
+    Route::post('/settlements/{settlement}/pay', [SettlementController::class, 'markPaid'])->name('settlements.markPaid');
 });
 
 // Colocation
