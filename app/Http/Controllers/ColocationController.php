@@ -162,8 +162,8 @@ class ColocationController extends Controller
         $token = Str::random(32);
 
         $invitation = Invitation::create([
-            'token'         => $token,
-            'email'         => $validated['email'],
+            'token' => $token,
+            'email' => $validated['email'],
             'colocation_id' => $colocation->id,
         ]);
 
@@ -192,12 +192,19 @@ class ColocationController extends Controller
 
         Gate::authorize('can_quit_colocation', $colocation);
 
+        $balances = $colocation->computeBalances();
+        $balance  = $balances[$user->id] ?? 0;
+
+        if ($balance < 0) {
+            $user->decrement('reputation');
+        } else {
+            $user->increment('reputation');
+        }
+
         $colocation->members()->updateExistingPivot($user->id, ['left_at' => now()]);
-
-        // $user->reputation -= 1;
-        // $user->reputation += 1;
-
         $user->save();
+
+        $colocation->generateSettlements();
 
         return redirect()->route('colocations.index')->with('status', 'You have quit the colocation.');
     }
