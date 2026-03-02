@@ -10,7 +10,7 @@ class Expense extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'amount', 'start_at', 'payer_id', 'category_id', 'colocation_id'
+        'title', 'amount', 'start_at', 'payer_id', 'category_id'
     ];
 
     protected $casts = [
