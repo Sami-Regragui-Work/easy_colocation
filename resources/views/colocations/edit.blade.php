@@ -3,7 +3,7 @@
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <h1 class="text-2xl font-bold text-gray-900 mb-6">Edit Colocation</h1>
 
-            <form method="put" action="{{ route('colocations.update', $colocation) }}">
+            <form method="POST" action="{{ route('colocations.update', $colocation) }}">
                 @csrf
                 @method('put')
 
