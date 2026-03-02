@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'can:manage-categories' => \App\Http\Middleware\CanManageCategories::class,
+            'manage.categories' => \App\Http\Middleware\CanManageCategories::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

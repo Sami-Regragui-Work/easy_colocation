@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateCategoryRequest extends FormRequest
 {
@@ -24,7 +25,7 @@ class UpdateCategoryRequest extends FormRequest
         $category = $this->route('category');
 
         return [
-            'name' => 'required|string|max:70|unique:categories,name,' . $category->id . ',id,colocation_id,' . $category->colocation_id
+            'name' => 'required|string|max:70|' . Rule::unique('categories', 'name')->where('colocation_id', $category->colocation_id)->whereNull('deleted_at')->ignore($category->id)
         ];
     }
 }

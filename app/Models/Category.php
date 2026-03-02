@@ -27,6 +27,6 @@ class Category extends Model
 
     public static function getNameSuggestions(string $query = ''): Collection
     {
-        return self::onlyTrashed()->where('name', 'like', "%{$query}%")->select('name')->distinct()->orderByRaw('COUNT(*) desc')->limit(10)->pluck('name');
+        return self::onlyTrashed()->where('name', 'like', "%{$query}%")->select('name')->distinct()->orderBy('name')->limit(10)->pluck('name');
     }
 }
