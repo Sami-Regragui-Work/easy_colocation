@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColocationController;
 use Illuminate\Support\Facades\Route;
 
@@ -65,5 +66,24 @@ Route::middleware('auth')->group(function () {
 
         // remove a member (Owner‑only)
         Route::post('/{colocation}/members/{member}/remove', [ColocationController::class, 'removeMember'])->name('removeMember');
+
+        // Categories
+        Route::prefix('{colocation}')->middleware('can:manage-categories')->name('categories.')->group(function () {
+            // List all categories for colocation
+            Route::get('categories', [CategoryController::class, 'index'])->name('index');
+
+            // Create form
+            Route::get('categories/create', [CategoryController::class, 'create'])->name('create');
+            // Store new category
+            Route::post('categories', [CategoryController::class, 'store'])->name('store');
+
+            // Edit form
+            Route::get('categories/{category}/edit', [CategoryController::class, 'edit'])->name('edit');
+            // Update category
+            Route::put('categories/{category}', [CategoryController::class, 'update'])->name('update');
+
+            // Soft delete category (hard deletes expenses)
+            Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->name('destroy');
+        });
     });
 });
