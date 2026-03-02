@@ -15,7 +15,7 @@ class CategoryController extends Controller
      */
     public function index(Colocation $colocation)
     {
-        $categories = $colocation->categories()->withCount(['expenses'])->orderBy('name')->get();
+        $categories = $colocation->categories()->withCount(['expenses'])->orderBy('name')->paginate(5);
 
         return view('categories.index', compact('colocation', 'categories'));
     }
