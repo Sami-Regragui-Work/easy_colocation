@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColocationController;
+use App\Http\Controllers\ExpenseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -69,7 +70,7 @@ Route::middleware('auth')->prefix('colocations')->name('colocations.')->group(fu
     // Categories
     Route::prefix('{colocation}/categories')->middleware('manage.categories')->name('categories.')->group(function () {
         // List all categories for colocation
-        Route::get('/', [CategoryController::class, 'index'])->name('index');
+        Route::get('/', [CategoryController::class, 'index'])->name('index')->withoutMiddleware('manage.categories');
 
         // Create form
         Route::get('/create', [CategoryController::class, 'create'])->name('create');
@@ -83,5 +84,27 @@ Route::middleware('auth')->prefix('colocations')->name('colocations.')->group(fu
 
         // Soft delete category (hard deletes expenses)
         Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');
+
+        // Expenses (Member access)
+        Route::prefix('{category}/expenses')->middleware('colocation.member')->withoutMiddleware('manage.categories')->name('expenses.')->group(function () {
+            // List expenses for category
+            Route::get('/', [ExpenseController::class, 'index'])->name('index');
+
+            // Create form
+            Route::get('/create', [ExpenseController::class, 'create'])->name('create');
+            // Store new expense
+            Route::post('/', [ExpenseController::class, 'store'])->name('store');
+
+            // Show single expense
+            Route::get('/{expense}', [ExpenseController::class, 'show'])->name('show');
+
+            // Edit form
+            Route::get('/{expense}/edit', [ExpenseController::class, 'edit'])->name('edit');
+            // Update expense
+            Route::put('/{expense}', [ExpenseController::class, 'update'])->name('update');
+
+            // Delete expense
+            Route::delete('/{expense}', [ExpenseController::class, 'destroy'])->name('destroy');
+        });
     });
 });
