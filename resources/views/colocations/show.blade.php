@@ -29,6 +29,15 @@
                             Edit
                         </a>
 
+                        <!-- Manage Categories (owner only) -->
+                        @if (auth()->user()->id === $colocation->owner_id)
+                            <a href="{{ route('colocations.categories.index', $colocation) }}"
+                                class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded text-sm font-semibold uppercase tracking-wide text-center">
+                                Manage Categories
+                            </a>
+                        @endif
+
+
                         <!-- Quit (member only) -->
                         @if ($colocation->status === 'active' && auth()->user()->id !== $colocation->owner_id)
                             <form action="{{ route('colocations.quit', $colocation) }}" method="post" class="inline">
