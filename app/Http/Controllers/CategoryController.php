@@ -15,7 +15,7 @@ class CategoryController extends Controller
      */
     public function index(Colocation $colocation)
     {
-        $categories = $colocation->categories()->withCount(['expenses' => fn($q) => $q->withTrashed()])->withTrashed()->orderBy('name')->get();
+        $categories = $colocation->categories()->withCount(['expenses'])->orderBy('name')->get();
 
         return view('categories.index', compact('colocation', 'categories'));
     }
@@ -25,7 +25,9 @@ class CategoryController extends Controller
      */
     public function create(Colocation $colocation)
     {
-        return view('categories.create', compact('colocation'));
+        $suggestions = Category::getNameSuggestions();
+
+        return view('categories.create', compact('colocation', 'suggestions'));
     }
 
     /**
@@ -38,7 +40,7 @@ class CategoryController extends Controller
             'colocation_id' => $colocation->id,
         ]);
 
-        return redirect()->route('colocations.show', $colocation)->with('status', 'Category created successfully.');
+        return redirect()->route('colocations.categories.index', $colocation)->with('status', 'Category created successfully.');
     }
 
     /**
@@ -52,29 +54,29 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Category $category)
+    public function edit(Colocation $colocation, Category $category)
     {
-        return view('categories.edit', compact('category'));
+        return view('categories.edit', compact('colocation', 'category'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Colocation $colocation, Category $category)
     {
         $category->update($request->validated());
 
-        return redirect()->route('categories.index', $category->colocation)->with('status', 'Category updated successfully.');
+        return redirect()->route('colocations.categories.index', $colocation)->with('status', 'Category updated successfully.');
     }
 
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(Colocation $colocation, Category $category)
     {
         $category->delete();
 
-        return redirect()->route('categories.index', $category->colocation)->with('status', 'Category deleted.');
+        return redirect()->route('colocations.categories.index', $colocation)->with('status', 'Category deleted.');
     }
 }

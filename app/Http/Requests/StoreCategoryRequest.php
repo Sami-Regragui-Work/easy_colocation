@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCategoryRequest extends FormRequest
 {
@@ -22,7 +23,7 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:70|unique:categories,name,NULL,id,colocation_id,' . $this->route('colocation')->id
+            'name' => 'required|string|max:70|' . Rule::unique('categories', 'name')->where('colocation_id', $this->route('colocation')->id)->whereNull('deleted_at')
         ];
     }
 }
