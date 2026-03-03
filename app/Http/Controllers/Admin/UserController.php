@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -45,15 +46,13 @@ class UserController extends Controller
 
     public function update(User $user, ProfileUpdateRequest $request)
     {
-        if ($user->id !== $request->user()->id) {
-            abort(403);
-        }
+        $validated = $request->validated();
 
-        $user->name  = $request->input('name');
-        $user->email = $request->input('email');
+        $user->name  = $validated['name'];
+        $user->email = $validated['email'];
 
         if ($request->filled('password')) {
-            $user->password = bcrypt($request->input('password'));
+            $user->password = bcrypt($validated['password']);
         }
 
         $user->save();
