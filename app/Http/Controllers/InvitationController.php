@@ -51,7 +51,7 @@ class InvitationController extends Controller
 
         Mail::to($validated['email'])->send(new InvitationEmail($invitation));
 
-        return redirect()->route('colocations.show', $colocation)->with('status', "Invitation sent! Test link: {$inviteLink}");
+        return redirect()->route('colocations.show', $colocation)->with('status', "Invitation sent! : {$inviteLink}");
     }
 
     public function accept(Invitation $invitation)

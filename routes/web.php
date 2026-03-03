@@ -29,6 +29,8 @@ Route::middleware('guest')->group(function () {
         Route::get('/', [LoginController::class, 'show'])->name('login');
         Route::post('/', [LoginController::class, 'handle']);
     });
+
+    Route::get('/dashboard', [LoginController::class, 'show'])->name('dashboard');
 });
 
 // Auth and banned check

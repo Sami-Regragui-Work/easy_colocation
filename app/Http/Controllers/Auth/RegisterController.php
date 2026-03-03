@@ -27,7 +27,7 @@ class RegisterController extends Controller
         ]);
 
         Auth::login($user);
-        $request->session()->regenerateToken();
+        $request->session()->regenerate();
         return redirect()->intended(route('colocations.index'));
     }
 }
