@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ColocationController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\SettlementController;
 use Illuminate\Support\Facades\Route;
 
@@ -63,7 +64,7 @@ Route::middleware('auth')->prefix('colocations')->name('colocations.')->group(fu
     Route::post('/{colocation}/cancel', [ColocationController::class, 'cancel'])->name('cancel');
 
     // Invite member (Owner‑only)
-    Route::post('/{colocation}/invite', [ColocationController::class, 'invite'])->name('invite');
+    // Route::post('/{colocation}/invite', [ColocationController::class, 'invite'])->name('invite');
 
     // quit (Member‑only)
     Route::post('/{colocation}/quit', [ColocationController::class, 'quit'])->name('quit');
@@ -111,4 +112,16 @@ Route::middleware('auth')->prefix('colocations')->name('colocations.')->group(fu
             Route::delete('/{expense}', [ExpenseController::class, 'destroy'])->name('destroy');
         });
     });
+
+    // Invitations
+    Route::prefix('{colocation}/invitations')->name('invitations.')->group(function () {
+        Route::get('/', [InvitationController::class, 'index'])->name('index');
+        Route::post('/', [InvitationController::class, 'invite'])->name('invite');
+    });
+});
+
+Route::middleware(['guest', 'valid.invitation', 'no.active.colocation'])->prefix('invitations/{invitation}')->name('invitations.')->group(function () {
+    Route::get('/accept', [InvitationController::class, 'accept'])->name('accept');
+
+    Route::post('/accept', [InvitationController::class, 'process'])->name('process');
 });
