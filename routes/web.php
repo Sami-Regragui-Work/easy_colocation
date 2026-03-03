@@ -70,7 +70,7 @@ Route::middleware('auth')->prefix('colocations')->name('colocations.')->group(fu
     Route::post('/{colocation}/quit', [ColocationController::class, 'quit'])->name('quit');
 
     // remove a member (Owner‑only)
-    Route::post('/{colocation}/members/{member}/remove', [ColocationController::class, 'removeMember'])->name('removeMember');
+    Route::post('/{colocation}/members/{member}/remove', [ColocationController::class, 'removeMember'])->name('members.remove');
 
     // Categories
     Route::prefix('{colocation}/categories')->middleware('manage.categories')->name('categories.')->group(function () {
