@@ -82,7 +82,8 @@ class ColocationController extends Controller
             'members' => fn($q) => $q->withPivot('role', 'left_at')->wherePivot('left_at', null),
             'owner',
             'categories',
-            'expenses' => fn($q) => $q->with(['payer', 'category'])
+            'expenses' => fn($q) => $q->with(['payer', 'category']),
+            'pendingSettlements.payer.receiver',
         ]);
 
         return view('colocations.show', compact('colocation'));
@@ -162,8 +163,8 @@ class ColocationController extends Controller
         $token = Str::random(32);
 
         $invitation = Invitation::create([
-            'token'         => $token,
-            'email'         => $validated['email'],
+            'token' => $token,
+            'email' => $validated['email'],
             'colocation_id' => $colocation->id,
         ]);
 
@@ -176,28 +177,53 @@ class ColocationController extends Controller
     {
         Gate::authorize('can_remove_member', $colocation, $member);
 
+        $balances = $colocation->computeBalances();
+        $memberBalance = $balances[$member->id] ?? 0;
+        $hasDebt = $memberBalance < 0;
+
+        if ($hasDebt) {
+            $member->decrement('reputation');
+        } else {
+            $member->increment('reputation');
+        }
+
         $colocation->members()->updateExistingPivot($member->id, ['left_at' => now()]);
 
-        // $member->reputation -= 1;
+        /** @var User $user */
+        $user = Auth::user();
+
+        if ($hasDebt && $user->id === $colocation->owner_id) {
+            $user->decrement('reputation');
+        }
 
         $member->save();
+        $user->save();
+
+        $colocation->generateSettlements();
 
         return redirect()->route('colocations.show', $colocation)->with('status', "Member {$member->name} removed.");
     }
 
     public function quit(Request $request, Colocation $colocation)
     {
+        Gate::authorize('can_quit_colocation', $colocation);
+
         /** @var User $user */
         $user = $request->user();
 
-        Gate::authorize('can_quit_colocation', $colocation);
+        $balances = $colocation->computeBalances();
+        $balance  = $balances[$user->id] ?? 0;
+
+        if ($balance < 0) {
+            $user->decrement('reputation');
+        } else {
+            $user->increment('reputation');
+        }
 
         $colocation->members()->updateExistingPivot($user->id, ['left_at' => now()]);
-
-        // $user->reputation -= 1;
-        // $user->reputation += 1;
-
         $user->save();
+
+        $colocation->generateSettlements();
 
         return redirect()->route('colocations.index')->with('status', 'You have quit the colocation.');
     }

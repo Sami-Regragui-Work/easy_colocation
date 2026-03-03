@@ -43,6 +43,7 @@ class ExpenseController extends Controller
     public function store(StoreExpenseRequest $request, Colocation $colocation, Category $category)
     {
         Expense::create($request->validated());
+        $colocation->generateSettlements();
 
         return redirect()->route('colocations.categories.expenses.index', [$colocation, $category])->with('status', 'Expense created successfully.');
     }
@@ -70,6 +71,8 @@ class ExpenseController extends Controller
     public function update(UpdateExpenseRequest $request, Colocation $colocation, Category $category, Expense $expense)
     {
         $expense->update($request->validated());
+        $colocation->generateSettlements();
+
         return redirect()->route('colocations.categories.expenses.index', [$colocation, $category])->with('status', 'Expense updated successfully.');
     }
 
@@ -79,6 +82,8 @@ class ExpenseController extends Controller
     public function destroy(Colocation $colocation, Category $category, Expense $expense)
     {
         $expense->delete();
+        $colocation->generateSettlements();
+        
         return redirect()->route('colocations.categories.expenses.index', [$colocation, $category])->with('status', 'Expense deleted.');
     }
 }
