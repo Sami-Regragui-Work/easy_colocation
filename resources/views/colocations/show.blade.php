@@ -98,10 +98,17 @@
                     @foreach ($colocation->members as $member)
                         <li
                             class="flex items-center justify-between px-5 py-3 border-b border-gray-100 last:border-b-0">
-                            <span class="text-gray-900">{{ $member->name }}</span>
+                            <span class="text-gray-900">
+                                {{ $member->name }}
+                            </span>
                             <div class="flex items-center space-x-3">
+                                <span class="text-xs font-medium bg-gray-100 text-gray-700 py-1 px-2 rounded">
+                                    Rep: {{ $member->reputation ?? 0 }}
+                                </span>
+
                                 @if (Gate::allows('can_remove_member', [$colocation, $member]))
-                                    <form method="post" action="{{ route('colocations.members.remove', [$colocation, $member]) }}"
+                                    <form method="post"
+                                        action="{{ route('colocations.members.remove', [$colocation, $member]) }}"
                                         class="inline"
                                         onsubmit="return confirm('Remove {{ $member->name }} from this colocation?')">
                                         @csrf
@@ -113,13 +120,14 @@
                                 @endif
 
                                 <span class="text-xs font-medium bg-gray-100 text-gray-700 py-1 px-2 rounded">
-                                    {{ $member->pivot->role }}
+                                    {{ ucfirst($member->pivot->role) }}
                                 </span>
                             </div>
                         </li>
                     @endforeach
                 </ul>
             </div>
+
 
 
             {{-- Pending Settlements --}}
