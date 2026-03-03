@@ -15,7 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'manage.categories' => \App\Http\Middleware\CanManageCategories::class,
             'colocation.member' => \App\Http\Middleware\ColocationMember::class,
             'valid.invitation' => \App\Http\Middleware\ValidInvitation::class,
-            'no.active.colocation' => \App\Http\Middleware\NoActiveColocation::class
+            'no.active.colocation' => \App\Http\Middleware\NoActiveColocation::class,
+            'admin' => \App\Http\Middleware\EnsureAdmin::class,
+            'banned' => \App\Http\Middleware\CheckBanned::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
