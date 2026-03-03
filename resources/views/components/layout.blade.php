@@ -22,9 +22,16 @@
                             <a href="{{ route('colocations.index') }}" class="text-xl font-bold text-gray-900">
                                 Colocation
                             </a>
-                            <a href="{{ route('profile.edit', Auth::user()) }}" class="text-xl text-gray-700 hover:text-gray-900">
+                            <a href="{{ route('profile.edit', Auth::user()) }}"
+                                class="text-xl text-gray-700 hover:text-gray-900">
                                 Profile
                             </a>
+                            @if (Auth::user()->is_admin)
+                                <a href="{{ route('admin.dashboard') }}"
+                                    class="text-xl text-indigo-700 hover:text-indigo-900">
+                                    Admin
+                                </a>
+                            @endif
                         </div>
                         <div class="flex items-center space-x-4">
                             <span class="text-sm text-gray-700">Hi, {{ Auth::user()->name }}</span>
