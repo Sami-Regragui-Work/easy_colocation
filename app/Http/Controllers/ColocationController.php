@@ -83,7 +83,8 @@ class ColocationController extends Controller
             'owner',
             'categories',
             'expenses' => fn($q) => $q->with(['payer', 'category']),
-            'pendingSettlements.payer.receiver',
+            'pendingSettlements.payer',
+            'pendingSettlements.receiver',
         ]);
 
         return view('colocations.show', compact('colocation'));
@@ -154,24 +155,24 @@ class ColocationController extends Controller
         return redirect()->route('colocations.index')->with('status', 'Colocation cancelled.');
     }
 
-    public function invite(InviteToColocationRequest $request, Colocation $colocation)
-    {
-        Gate::authorize('can_invite_member', $colocation);
+    // public function invite(InviteToColocationRequest $request, Colocation $colocation)
+    // {
+    //     Gate::authorize('can_invite_member', $colocation);
 
-        $validated = $request->validated();
+    //     $validated = $request->validated();
 
-        $token = Str::random(32);
+    //     $token = Str::random(32);
 
-        $invitation = Invitation::create([
-            'token' => $token,
-            'email' => $validated['email'],
-            'colocation_id' => $colocation->id,
-        ]);
+    //     $invitation = Invitation::create([
+    //         'token' => $token,
+    //         'email' => $validated['email'],
+    //         'colocation_id' => $colocation->id,
+    //     ]);
 
-        Mail::to($validated['email'])->send(new InvitationEmail($invitation));
+    //     Mail::to($validated['email'])->send(new InvitationEmail($invitation));
 
-        return redirect()->route('colocations.show', $colocation)->with('status', 'Invitation sent.');
-    }
+    //     return redirect()->route('colocations.show', $colocation)->with('status', 'Invitation sent.');
+    // }
 
     public function removeMember(Colocation $colocation, User $member)
     {
