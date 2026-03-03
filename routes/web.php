@@ -116,7 +116,7 @@ Route::middleware(['auth', 'banned'])->group(function () {
     });
 
     // Profile
-    Route::prefix('profile')->name('profile.')->group(function () {
+    Route::prefix('profile/{user}')->name('profile.')->group(function () {
         // Profile edit form
         Route::get('/', [UserController::class, 'edit'])->name('edit');
 

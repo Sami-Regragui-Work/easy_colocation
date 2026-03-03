@@ -44,7 +44,7 @@ class UserController extends Controller
         return view('profile.edit', compact('user'));
     }
 
-    public function update(User $user, ProfileUpdateRequest $request)
+    public function update(ProfileUpdateRequest $request, User $user)
     {
         $validated = $request->validated();
 
