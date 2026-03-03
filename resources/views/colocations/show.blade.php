@@ -1,6 +1,19 @@
 <x-layout :title="'Colocation: ' . $colocation->name">
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+            @if (session('status'))
+                <div class="bg-green-100 border border-green-200 text-green-800 px-4 py-3 rounded mb-6">
+                    {{ session('status') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="bg-red-100 border border-red-200 text-red-800 px-4 py-3 rounded mb-6">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <div class="flex items-center justify-between mb-6">
                 <h1 class="text-2xl font-bold text-gray-900">
                     Colocation: {{ $colocation->name }}
@@ -29,13 +42,11 @@
                             Edit
                         </a>
 
-                        <!-- Manage Categories (owner only) -->
-                        @if (auth()->user()->id === $colocation->owner_id)
-                            <a href="{{ route('colocations.categories.index', $colocation) }}"
-                                class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded text-sm font-semibold uppercase tracking-wide text-center">
-                                Manage Categories
-                            </a>
-                        @endif
+                        <!-- See Categories (owner only) -->
+                        <a href="{{ route('colocations.categories.index', $colocation) }}"
+                            class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded text-sm font-semibold uppercase tracking-wide text-center">
+                            See Categories
+                        </a>
 
 
                         <!-- Quit (member only) -->
@@ -88,13 +99,28 @@
                         <li
                             class="flex items-center justify-between px-5 py-3 border-b border-gray-100 last:border-b-0">
                             <span class="text-gray-900">{{ $member->name }}</span>
-                            <span class="text-xs font-medium bg-gray-100 text-gray-700 py-1 px-2 rounded">
-                                {{ $member->pivot->role }}
-                            </span>
+                            <div class="flex items-center space-x-3">
+                                @if (Gate::allows('can_remove_member', [$colocation, $member]))
+                                    <form method="post" action="{{ route('colocations.members.remove', [$colocation, $member]) }}"
+                                        class="inline"
+                                        onsubmit="return confirm('Remove {{ $member->name }} from this colocation?')">
+                                        @csrf
+                                        <button type="submit"
+                                            class="text-red-600 hover:text-red-900 text-sm font-medium">
+                                            Remove
+                                        </button>
+                                    </form>
+                                @endif
+
+                                <span class="text-xs font-medium bg-gray-100 text-gray-700 py-1 px-2 rounded">
+                                    {{ $member->pivot->role }}
+                                </span>
+                            </div>
                         </li>
                     @endforeach
                 </ul>
             </div>
+
 
             {{-- Pending Settlements --}}
             @if ($colocation->pendingSettlements->isNotEmpty())
@@ -141,26 +167,28 @@
             @endif
 
             <!-- Invite form -->
-            <div class="mt-8 bg-white shadow rounded-lg p-6">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Invite a Member</h2>
-                <form method="post" action="{{ route('colocations.invite', $colocation) }}">
-                    @csrf
-                    <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                        <div class="flex-1">
-                            <input type="email" name="email" placeholder="member@example.com"
-                                class="block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-                                required>
-                            @error('email')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+            @if (Gate::allows('can_invite_member', $colocation))
+                <div class="mt-8 bg-white shadow rounded-lg p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Invite a Member</h2>
+                    <form method="post" action="{{ route('colocations.invitations.invite', $colocation) }}">
+                        @csrf
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                            <div class="flex-1">
+                                <input type="email" name="email" placeholder="member@example.com"
+                                    class="block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                                    required>
+                                @error('email')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <button type="submit"
+                                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded text-sm">
+                                Invite
+                            </button>
                         </div>
-                        <button type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded text-sm">
-                            Invite
-                        </button>
-                    </div>
-                </form>
-            </div>
+                    </form>
+                </div>
+            @endif
         </div>
     </div>
 </x-layout>

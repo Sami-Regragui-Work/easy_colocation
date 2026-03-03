@@ -10,10 +10,12 @@
             <div class="flex items-center justify-between mb-8">
                 <h1 class="text-3xl font-bold text-gray-900">Categories</h1>
                 <div class="flex flex-wrap gap-3 justify-end">
-                    <a href="{{ route('colocations.categories.create', $colocation) }}"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium">
-                        New Category
-                    </a>
+                    @if (Gate::allows('can_update_colocation', $colocation))
+                        <a href="{{ route('colocations.categories.create', $colocation) }}"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium">
+                            New Category
+                        </a>
+                    @endif
                     <a href="{{ route('colocations.show', $colocation) }}"
                         class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-medium">
                         Back
@@ -25,9 +27,11 @@
                 <div class="bg-white shadow-xl rounded-xl p-12 text-center border-2 border-dashed border-gray-200">
                     <h3 class="text-lg font-medium text-gray-900 mb-2">No categories yet</h3>
                     <p class="text-gray-500 mb-6">Categories help you organize expenses.</p>
-                    <a href="{{ route('colocations.categories.create', $colocation) }}" class="btn-primary">
-                        Create first category
-                    </a>
+                    @if (Gate::allows('can_update_colocation', $colocation))
+                        <a href="{{ route('colocations.categories.create', $colocation) }}" class="btn-primary">
+                            Create first category
+                        </a>
+                    @endif
                 </div>
             @else
                 <div class="bg-white shadow-xl rounded-xl overflow-hidden">
@@ -40,9 +44,11 @@
                                 <th
                                     class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Expenses</th>
-                                <th
-                                    class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions</th>
+                                @if (Gate::allows('can_update_colocation', $colocation))
+                                    <th
+                                        class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Actions</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -60,22 +66,24 @@
                                         <span
                                             class="text-sm text-gray-900 font-medium">{{ $category->expenses_count }}</span>
                                     </td>
-                                    <td class="px-6 py-4 text-right space-x-3">
-                                        <a href="{{ route('colocations.categories.edit', [$colocation, $category]) }}"
-                                            class="text-indigo-600 hover:text-indigo-900 font-medium text-sm">
-                                            Edit
-                                        </a>
-                                        <form
-                                            action="{{ route('colocations.categories.destroy', [$colocation, $category]) }}"
-                                            method="POST" class="inline"
-                                            onsubmit="return confirm('Delete category and all expenses?')">
-                                            @csrf @method('DELETE')
-                                            <button type="submit"
-                                                class="text-red-600 hover:text-red-900 font-medium text-sm">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </td>
+                                    @if (Gate::allows('can_update_colocation', $colocation))
+                                        <td class="px-6 py-4 text-right space-x-3">
+                                            <a href="{{ route('colocations.categories.edit', [$colocation, $category]) }}"
+                                                class="text-indigo-600 hover:text-indigo-900 font-medium text-sm">
+                                                Edit
+                                            </a>
+                                            <form
+                                                action="{{ route('colocations.categories.destroy', [$colocation, $category]) }}"
+                                                method="POST" class="inline"
+                                                onsubmit="return confirm('Delete category and all expenses?')">
+                                                @csrf @method('DELETE')
+                                                <button type="submit"
+                                                    class="text-red-600 hover:text-red-900 font-medium text-sm">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
