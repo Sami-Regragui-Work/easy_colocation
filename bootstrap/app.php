@@ -13,7 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'manage.categories' => \App\Http\Middleware\CanManageCategories::class,
-            'colocation.member' => \App\Http\Middleware\ColocationMember::class
+            'colocation.member' => \App\Http\Middleware\ColocationMember::class,
+            'valid.invitation' => \App\Http\Middleware\ValidInvitation::class,
+            'no.active.colocation' => \App\Http\Middleware\NoActiveColocation::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
